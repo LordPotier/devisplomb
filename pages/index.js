@@ -68,7 +68,7 @@ export default function Login() {
         <p className="text-center text-sm text-gray-500 mt-4">
           {isSignup ? 'Déjà un compte ?' : 'Pas encore de compte ?'}{' '}
           <button onClick={() => setIsSignup(!isSignup)} className="text-gray-900 font-medium underline">
-            {isSignup ? 'Créer un compte' : 'Se connecter'}
+            {isSignup ? 'Se connecter' : 'Créer un compte'}
           </button>
         </p>
         {!isSignup && !isForgotPassword && (
