@@ -25,7 +25,7 @@ export default function Login() {
       } else if (isSignup) {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
-        setMsg('Compte créé ! Vérifiez votre email pour confirmer.')
+        router.push('/abonnement')
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
