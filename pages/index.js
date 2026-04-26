@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
 
@@ -10,6 +10,16 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
   const router = useRouter()
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.replace('/dashboard')
+      } else {
+        router.replace('/accueil')
+      }
+    })
+  }, [])
 
   async function handleAuth(e) {
     e.preventDefault()
