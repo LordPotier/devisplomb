@@ -4,14 +4,7 @@ export default function Abonnement() {
   const [loading, setLoading] = useState(false)
 
   async function subscribe() {
-    setLoading(true)
-    const res = await fetch('/api/stripe/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: '' })
-    })
-    const { url } = await res.json()
-    window.location.href = url
+    window.location.href = 'https://buy.stripe.com/7sY28s4w3968aA137edZ600'
   }
 
   return (
