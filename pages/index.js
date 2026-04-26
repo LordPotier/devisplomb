@@ -85,9 +85,6 @@ export default function Login() {
             </button>
           </p>
         )}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg text-xs text-blue-700 text-center">
-          💡 Essai gratuit 14 jours — aucune carte requise
-        </div>
       </div>
     </div>
   )
