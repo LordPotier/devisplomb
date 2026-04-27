@@ -12,14 +12,19 @@ export default function Login() {
   const router = useRouter()
 
   useEffect(() => {
+    // Vérifier si on vient d'une redirection automatique ou d'un paramètre signup
+    if (router.query.signup === 'true') {
+      setIsSignup(true)
+    }
+
+    // Vérifier la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         router.replace('/dashboard')
-      } else {
-        router.replace('/accueil')
       }
+      // Si pas de session, rester sur /login (ne pas rediriger vers /accueil)
     })
-  }, [])
+  }, [router.query])
 
   async function handleAuth(e) {
     e.preventDefault()

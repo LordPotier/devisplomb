@@ -14,7 +14,7 @@ export default function Accueil() {
             </div>
             <span className="text-xl font-bold text-gray-900">DevisPlomb</span>
           </div>
-          <Link href="/" className="text-gray-600 hover:text-gray-900 font-medium transition">
+          <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium transition">
             Se connecter
           </Link>
         </div>
@@ -35,7 +35,7 @@ export default function Accueil() {
             Gagnez du temps sur vos devis et paiements. Interface simple, designed pour les artisans qui veulent se concentrer sur leur métier.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-600/25">
+            <Link href="/login?signup=true" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-600/25">
               Essayer gratuitement 7 jours
             </Link>
             <span className="text-gray-500 text-sm">Aucune carte requise</span>
@@ -103,7 +103,7 @@ export default function Accueil() {
                   </li>
                 ))}
               </ul>
-              <Link href="/" className="block mt-8 w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-center hover:bg-blue-700 transition">
+              <Link href="/login?signup=true" className="block mt-8 w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-center hover:bg-blue-700 transition">
                 Essayer gratuitement 7 jours
               </Link>
               <p className="text-center text-gray-400 text-sm mt-4">Sans engagement · Résiliable à tout moment</p>
