@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 
 export default function Login() {
@@ -12,14 +13,19 @@ export default function Login() {
   const router = useRouter()
 
   useEffect(() => {
+    // Vérifier si on vient d'une redirection automatique ou d'un paramètre signup
+    if (router.query.signup === 'true') {
+      setIsSignup(true)
+    }
+
+    // Vérifier la session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         router.replace('/dashboard')
-      } else {
-        router.replace('/accueil')
       }
+      // Si pas de session, rester sur /login
     })
-  }, [])
+  }, [router.query])
 
   async function handleAuth(e) {
     e.preventDefault()
@@ -51,8 +57,8 @@ export default function Login() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-content-center">
       <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">DevisPlomb</h1>
-          <p className="text-gray-500 mt-2">Gérez vos devis et paiements facilement</p>
+          <Link href="/accueil" className="text-3xl font-bold text-gray-900">DevisPlomb</Link>
+          <p className="text-gray-500 mt-2">{isSignup ? 'Créez votre compte' : 'Connectez-vous à votre compte'}</p>
         </div>
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
@@ -62,12 +68,12 @@ export default function Login() {
               placeholder="vous@email.fr" />
           </div>
           {!isForgotPassword && (
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Mot de passe</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-              placeholder="••••••••" />
-          </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Mot de passe</label>
+              <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                placeholder="••••••••" />
+            </div>
           )}
           {msg && <p className={`text-sm p-3 rounded-lg ${msg.includes('envoyé') ? 'text-green-600 bg-green-50' : 'text-red-500 bg-red-50'}`}>{msg}</p>}
           <button type="submit" disabled={loading}
@@ -95,6 +101,11 @@ export default function Login() {
             </button>
           </p>
         )}
+        <div className="mt-6 text-center">
+          <Link href="/accueil" className="text-sm text-gray-500 hover:text-gray-700">
+            ← Retour à l'accueil
+          </Link>
+        </div>
       </div>
     </div>
   )
