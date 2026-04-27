@@ -61,6 +61,18 @@ export default function NouveauDevis() {
   async function saveDevis() {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
+    
+    // Vérifier le plan et le nombre de devis
+    const { data: profil } = await supabase.from('profils').select('plan').eq('id', user.id).single()
+    const { count } = await supabase.from('devis').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+    
+    const isGratuit = !profil || profil.plan !== 'pro'
+    if (isGratuit && count >= 3) {
+      alert('Limite de 3 devis atteinte. Passez en Pro pour créer des devis illimités.')
+      setLoading(false)
+      return
+    }
+    
     const num = 'DEV-' + Date.now().toString().slice(-6)
     const { data, error } = await supabase.from('devis').insert({
       user_id: user.id,

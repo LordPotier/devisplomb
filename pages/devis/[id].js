@@ -8,14 +8,44 @@ export default function DevisDetail() {
   const router = useRouter()
   const { id } = router.query
   const [devis, setDevis] = useState(null)
+  const [userPlan, setUserPlan] = useState({ plan: 'gratuit' })
 
   useEffect(() => {
     if (id) {
       supabase.from('devis').select('*').eq('id', id).single().then(({ data }) => {
         if (data) setDevis(data)
       })
+      // Vérifier le plan utilisateur
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          supabase.from('profils').select('plan').eq('id', data.session.user.id).single().then(({ data: profil }) => {
+            setUserPlan({ plan: profil?.plan || 'gratuit' })
+          })
+        }
+      })
     }
   }, [id])
+
+  const isPro = userPlan.plan === 'pro'
+
+  function handleExportPDF() {
+    if (!isPro) {
+      alert('Fonctionnalité Pro : Export PDF débloqué avec le plan Pro.')
+      router.push('/abonnement')
+      return
+    }
+    generateDevisPDF(devis)
+  }
+
+  function handleSignature() {
+    if (!isPro) {
+      alert('Fonctionnalité Pro : Signature électronique débloquée avec le plan Pro.')
+      router.push('/abonnement')
+      return
+    }
+    // Logique de signature à implémenter
+    supabase.from('devis').update({ statut: 'envoyé' }).eq('id', id).then(() => setDevis(d => ({...d, statut: 'envoyé'})))
+  }
 
   if (!devis) return <Layout><p className="text-gray-400">Chargement...</p></Layout>
 
@@ -31,13 +61,13 @@ export default function DevisDetail() {
             className="border border-gray-200 px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
             Modifier
           </button>
-          <button onClick={() => generateDevisPDF(devis)}
-            className="border border-gray-200 px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
-            Export PDF
+          <button onClick={handleExportPDF}
+            className={`border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 ${!isPro ? 'border-orange-200 text-orange-600' : 'border-gray-200'}`}>
+            {!isPro ? '🔒 Export PDF' : 'Export PDF'}
           </button>
-          <button onClick={() => supabase.from('devis').update({ statut: 'envoyé' }).eq('id', id).then(() => setDevis(d => ({...d, statut: 'envoyé'})))}
-            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700">
-            Marquer comme envoyé
+          <button onClick={handleSignature}
+            className={`px-4 py-2 rounded-lg text-sm hover:bg-gray-700 ${!isPro ? 'bg-orange-100 text-orange-600 border border-orange-200' : 'bg-gray-900 text-white'}`}>
+            {!isPro ? '🔒 Signature' : 'Marquer comme envoyé'}
           </button>
         </div>
       </div>
