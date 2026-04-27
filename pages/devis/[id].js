@@ -9,6 +9,7 @@ export default function DevisDetail() {
   const { id } = router.query
   const [devis, setDevis] = useState(null)
   const [userPlan, setUserPlan] = useState({ plan: 'gratuit' })
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -27,6 +28,39 @@ export default function DevisDetail() {
   }, [id])
 
   const isPro = userPlan.plan === 'pro'
+
+  async function handleEnvoyerEmail() {
+    if (!isPro) {
+      alert('Fonctionnalité Pro : Envoi par email débloqué avec le plan Pro.')
+      router.push('/abonnement')
+      return
+    }
+    
+    if (!devis.client_email) {
+      alert('Aucun email client défini pour ce devis.')
+      return
+    }
+
+    setSending(true)
+    try {
+      const res = await fetch('/api/envoyer-devis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ devisId: id })
+      })
+      const data = await res.json()
+      
+      if (res.ok) {
+        alert('Devis envoyé par email avec succès !')
+        setDevis(d => ({ ...d, statut: 'envoyé' }))
+      } else {
+        alert(data.error || 'Erreur lors de l\'envoi')
+      }
+    } catch (err) {
+      alert('Erreur lors de l\'envoi : ' + err.message)
+    }
+    setSending(false)
+  }
 
   function handleExportPDF() {
     if (!isPro) {
@@ -60,6 +94,10 @@ export default function DevisDetail() {
           <button onClick={() => router.push(`/devis/modifier/${id}`)}
             className="border border-gray-200 px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
             Modifier
+          </button>
+          <button onClick={handleEnvoyerEmail} disabled={sending}
+            className={`border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 ${!isPro ? 'border-orange-200 text-orange-600' : 'border-gray-200'}`}>
+            {sending ? 'Envoi...' : !isPro ? '🔒 Envoyer par email' : 'Envoyer par email'}
           </button>
           <button onClick={handleExportPDF}
             className={`border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 ${!isPro ? 'border-orange-200 text-orange-600' : 'border-gray-200'}`}>
